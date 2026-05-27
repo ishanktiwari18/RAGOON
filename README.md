@@ -216,19 +216,7 @@ Grounded response is returned to the user.
 
 ---
 
-# 📈 Future Improvements
 
-- Hybrid Search
-- Reranking
-- Persistent Vector DB
-- Multi-agent workflows
-- Web Search tools
-- Conversation memory
-- Citation support
-- PDF ingestion pipeline
-- Streaming responses
-
----
 
 # 🛠 Current Limitations
 
