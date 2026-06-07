@@ -1,14 +1,17 @@
 """Streamlit UI for Agentic RAG System - Redesigned"""
+
 import os
 os.environ["USER_AGENT"] = "RAGOON/1.0"
+
 import uuid
 import builtins
 builtins.uuid = uuid
 
-import streamlit as st
-from pathlib import Path
 import sys
 import time
+from pathlib import Path
+
+import streamlit as st
 
 sys.path.append(str(Path(__file__).parent))
 
@@ -17,11 +20,13 @@ from src.document_ingestion.document_processor import DocumentProcessor
 from src.vectorstore.vectorstore import VectorStore
 from src.graph_builder.graph_builder import GraphBuilder
 
+
 st.set_page_config(
     page_title="RAGOON",
     page_icon="🦝",
     layout="centered"
 )
+
 
 st.markdown("""
 <style>
@@ -37,22 +42,20 @@ html, body, [class*="css"] {
 
 #MainMenu, footer, header { visibility: hidden; }
 
-/* Hide Streamlit's black cache/running status bar */
 [data-testid="stCacheSpinner"],
 [data-testid="stStatusWidget"],
 .stCacheSpinner,
 div[class*="StatusWidget"],
 div[class*="cacheSpinner"],
-iframe[title="st_cache_spinner"] { display: none !important; }
+iframe[title="st_cache_spinner"] {
+    display: none !important;
+}
 
 .block-container {
     max-width: 800px !important;
     padding: 3.5rem 2rem 5rem 2rem !important;
 }
 
-/* ══════════════════════════════
-   HERO
-══════════════════════════════ */
 .hero-block {
     background: linear-gradient(135deg, #5B50D6 0%, #7B6FEF 100%);
     border-radius: 28px;
@@ -60,6 +63,7 @@ iframe[title="st_cache_spinner"] { display: none !important; }
     margin-bottom: 32px;
     box-shadow: 0 12px 40px rgba(91, 80, 214, 0.28);
 }
+
 .hero-label {
     font-size: 10px;
     font-weight: 600;
@@ -68,6 +72,7 @@ iframe[title="st_cache_spinner"] { display: none !important; }
     color: rgba(255,255,255,0.50);
     margin-bottom: 16px;
 }
+
 .hero-title {
     font-family: 'Playfair Display', serif;
     font-size: 62px;
@@ -77,6 +82,7 @@ iframe[title="st_cache_spinner"] { display: none !important; }
     margin-bottom: 16px;
     letter-spacing: -1px;
 }
+
 .hero-subtitle {
     font-size: 14.5px;
     font-weight: 300;
@@ -85,9 +91,6 @@ iframe[title="st_cache_spinner"] { display: none !important; }
     max-width: 440px;
 }
 
-/* ══════════════════════════════
-   PILLS
-══════════════════════════════ */
 .pills-row {
     display: flex;
     gap: 10px;
@@ -95,6 +98,7 @@ iframe[title="st_cache_spinner"] { display: none !important; }
     flex-wrap: wrap;
     align-items: center;
 }
+
 .pill {
     background: #FFFFFF;
     border: 2px solid #DDD8F5;
@@ -106,6 +110,7 @@ iframe[title="st_cache_spinner"] { display: none !important; }
     white-space: nowrap;
     line-height: 1;
 }
+
 .pill-active {
     background: #5B50D6;
     border-color: #5B50D6;
@@ -113,9 +118,6 @@ iframe[title="st_cache_spinner"] { display: none !important; }
     font-weight: 600;
 }
 
-/* ══════════════════════════════
-   READY BANNER
-══════════════════════════════ */
 .ready-banner {
     background: #EDEAFB;
     border: 2px solid #C8C1F0;
@@ -128,11 +130,10 @@ iframe[title="st_cache_spinner"] { display: none !important; }
     letter-spacing: 0.1px;
 }
 
-div[data-testid="stAlert"] { display: none !important; }
+div[data-testid="stAlert"] {
+    display: none !important;
+}
 
-/* ══════════════════════════════
-   INPUT
-══════════════════════════════ */
 .stTextInput > div > div > input {
     background-color: #FFFFFF !important;
     border: 2px solid #D8D3F0 !important;
@@ -144,21 +145,26 @@ div[data-testid="stAlert"] { display: none !important; }
     caret-color: #1A1630 !important;
     box-shadow: 0 2px 12px rgba(91,80,214,0.07) !important;
 }
+
 .stTextInput > div > div > input::placeholder {
     color: #B8B2D8 !important;
     font-weight: 300 !important;
 }
+
 .stTextInput > div > div > input:focus {
     border-color: #5B50D6 !important;
     box-shadow: 0 0 0 3px rgba(91,80,214,0.12) !important;
     outline: none !important;
 }
-.stTextInput label { display: none !important; }
-.stTextInput > div { margin-bottom: 14px; }
 
-/* ══════════════════════════════
-   SEARCH BUTTON
-══════════════════════════════ */
+.stTextInput label {
+    display: none !important;
+}
+
+.stTextInput > div {
+    margin-bottom: 14px;
+}
+
 .stFormSubmitButton > button {
     background: linear-gradient(135deg, #5B50D6 0%, #7B6FEF 100%) !important;
     color: #FFFFFF !important;
@@ -173,14 +179,12 @@ div[data-testid="stAlert"] { display: none !important; }
     min-width: 160px !important;
     box-shadow: 0 6px 20px rgba(91,80,214,0.30) !important;
 }
+
 .stFormSubmitButton > button:focus {
     box-shadow: 0 6px 20px rgba(91,80,214,0.30) !important;
     outline: none !important;
 }
 
-/* ══════════════════════════════
-   SECTION LABEL
-══════════════════════════════ */
 .section-label {
     font-size: 10px;
     font-weight: 700;
@@ -191,9 +195,6 @@ div[data-testid="stAlert"] { display: none !important; }
     margin-top: 36px;
 }
 
-/* ══════════════════════════════
-   ANSWER CARD
-══════════════════════════════ */
 .answer-card {
     background: #FFFFFF;
     border-radius: 22px;
@@ -202,6 +203,7 @@ div[data-testid="stAlert"] { display: none !important; }
     margin-bottom: 16px;
     box-shadow: 0 4px 24px rgba(91,80,214,0.08);
 }
+
 .answer-q {
     font-family: 'Playfair Display', serif;
     font-size: 20px;
@@ -210,6 +212,7 @@ div[data-testid="stAlert"] { display: none !important; }
     margin-bottom: 16px;
     line-height: 1.35;
 }
+
 .answer-body {
     font-size: 14.5px;
     font-weight: 300;
@@ -217,6 +220,7 @@ div[data-testid="stAlert"] { display: none !important; }
     line-height: 1.9;
     white-space: pre-wrap;
 }
+
 .time-badge {
     display: inline-block;
     background: #EDEAFB;
@@ -230,9 +234,6 @@ div[data-testid="stAlert"] { display: none !important; }
     letter-spacing: 0.5px;
 }
 
-/* ══════════════════════════════
-   EXPANDER (Source Documents)
-══════════════════════════════ */
 details {
     background: #1C1830 !important;
     border-radius: 16px !important;
@@ -240,6 +241,7 @@ details {
     overflow: hidden !important;
     margin-bottom: 16px !important;
 }
+
 details > summary {
     font-family: 'DM Sans', sans-serif !important;
     font-size: 13.5px !important;
@@ -250,15 +252,16 @@ details > summary {
     list-style: none !important;
     cursor: pointer !important;
 }
-details > summary::-webkit-details-marker { display: none; }
+
+details > summary::-webkit-details-marker {
+    display: none;
+}
+
 .streamlit-expanderContent {
     padding: 4px 4px 16px 4px !important;
     background: transparent !important;
 }
 
-/* ══════════════════════════════
-   SOURCE CARD
-══════════════════════════════ */
 .source-card {
     background: #2A2545;
     border-radius: 14px;
@@ -266,6 +269,7 @@ details > summary::-webkit-details-marker { display: none; }
     margin: 0 12px 10px 12px;
     border: 1px solid #3D3660;
 }
+
 .source-num {
     font-size: 10px;
     font-weight: 700;
@@ -274,6 +278,7 @@ details > summary::-webkit-details-marker { display: none; }
     color: #7B6FEF;
     margin-bottom: 8px;
 }
+
 .source-text {
     font-size: 13px;
     font-weight: 300;
@@ -281,18 +286,12 @@ details > summary::-webkit-details-marker { display: none; }
     line-height: 1.72;
 }
 
-/* ══════════════════════════════
-   DIVIDER
-══════════════════════════════ */
 .divider {
     border: none;
     border-top: 2px solid #DEDAD2;
     margin: 36px 0 0 0;
 }
 
-/* ══════════════════════════════
-   HISTORY CARD
-══════════════════════════════ */
 .history-card {
     background: #FFFFFF;
     border-radius: 18px;
@@ -301,6 +300,7 @@ details > summary::-webkit-details-marker { display: none; }
     margin-bottom: 12px;
     box-shadow: 0 2px 14px rgba(91,80,214,0.06);
 }
+
 .history-q {
     font-family: 'Playfair Display', serif;
     font-size: 15px;
@@ -309,6 +309,7 @@ details > summary::-webkit-details-marker { display: none; }
     margin-bottom: 7px;
     line-height: 1.4;
 }
+
 .history-a {
     font-size: 13px;
     font-weight: 300;
@@ -316,6 +317,7 @@ details > summary::-webkit-details-marker { display: none; }
     line-height: 1.68;
     margin-bottom: 10px;
 }
+
 .history-meta {
     font-size: 10.5px;
     font-weight: 600;
@@ -324,17 +326,12 @@ details > summary::-webkit-details-marker { display: none; }
     color: #B8B2D8;
 }
 
-/* ══════════════════════════════
-   SPINNER
-══════════════════════════════ */
 .stSpinner > div > div {
     border-top-color: #5B50D6 !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-
-# ── Session ───────────────────────────────────────────────────────────────────
 
 def init_session_state():
     defaults = {
@@ -344,42 +341,47 @@ def init_session_state():
         "last_result": None,
         "ready_msg": "",
     }
-    for k, v in defaults.items():
-        if k not in st.session_state:
-            st.session_state[k] = v
 
+    for key, value in defaults.items():
+        if key not in st.session_state:
+            st.session_state[key] = value
 
-# ── RAG ───────────────────────────────────────────────────────────────────────
 
 @st.cache_resource
 def initialize_rag():
     try:
         llm = Config.get_llm()
+
         doc_processor = DocumentProcessor(
             chunk_size=Config.CHUNK_SIZE,
             chunk_overlap=Config.CHUNK_OVERLAP,
         )
+
         vector_store = VectorStore()
+
         documents = doc_processor.process_urls(Config.DEFAULT_URLS)
         vector_store.create_vectorstore(documents)
+
         graph_builder = GraphBuilder(
             retriever=vector_store.get_retriever(),
             llm=llm,
         )
+
         graph_builder.build()
+
         return graph_builder, len(documents)
+
     except Exception as e:
         return None, str(e)
 
 
-# ── Render helpers ────────────────────────────────────────────────────────────
-
 def esc(text: str) -> str:
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
 def render_answer(question: str, answer: str, elapsed: float):
     st.markdown('<div class="section-label">Answer</div>', unsafe_allow_html=True)
+
     st.markdown(f"""
     <div class="answer-card">
         <div class="answer-q">{esc(question)}</div>
@@ -391,11 +393,12 @@ def render_answer(question: str, answer: str, elapsed: float):
 
 def render_sources(docs):
     with st.expander("Source Documents"):
-        for i, doc in enumerate(docs, 1):
+        for index, doc in enumerate(docs, 1):
             text = esc(doc.page_content[:320])
+
             st.markdown(f"""
             <div class="source-card">
-                <div class="source-num">Source {i}</div>
+                <div class="source-num">Source {index}</div>
                 <div class="source-text">{text}...</div>
             </div>
             """, unsafe_allow_html=True)
@@ -404,6 +407,7 @@ def render_sources(docs):
 def render_history(history):
     st.markdown('<hr class="divider">', unsafe_allow_html=True)
     st.markdown('<div class="section-label">Recent Searches</div>', unsafe_allow_html=True)
+
     for item in reversed(history[-3:]):
         st.markdown(f"""
         <div class="history-card">
@@ -414,21 +418,19 @@ def render_history(history):
         """, unsafe_allow_html=True)
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
-
 def main():
     init_session_state()
 
-    # Hero
     st.markdown("""
     <div class="hero-block">
         <div class="hero-label">Agentic Research</div>
         <div class="hero-title">🦝Ragoon</div>
-        <div class="hero-subtitle">Interact with cutting-edge research on AI Agents and Diffusion Video Models</div>
+        <div class="hero-subtitle">
+            Interact with cutting-edge research on AI Agents and Diffusion Video Models
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Pills
     st.markdown("""
     <div class="pills-row">
         <span class="pill pill-active">All</span>
@@ -438,14 +440,16 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # System init
     if not st.session_state.initialized:
         with st.spinner("Initializing system..."):
             rag_system, result = initialize_rag()
+
             if rag_system:
                 st.session_state.rag_system = rag_system
                 st.session_state.initialized = True
-                st.session_state.ready_msg = f"System ready — {result} document chunks loaded"
+                st.session_state.ready_msg = (
+                    f"System ready — {result} document chunks loaded"
+                )
             else:
                 st.session_state.ready_msg = f"Initialization error: {result}"
 
@@ -455,18 +459,20 @@ def main():
             unsafe_allow_html=True,
         )
 
-    # Search form
     with st.form("search_form"):
-        question = st.text_input("", placeholder="Search across research papers...")
+        question = st.text_input(
+            "Question",
+            placeholder="Search across research papers...",
+            label_visibility="collapsed",
+        )
         submit = st.form_submit_button("Search")
 
-    # Run search
     if submit and question:
         if st.session_state.rag_system:
             with st.spinner("Searching..."):
-                t0 = time.time()
+                start_time = time.time()
                 result = st.session_state.rag_system.run(question)
-                elapsed = time.time() - t0
+                elapsed = time.time() - start_time
 
             entry = {
                 "question": question,
@@ -474,16 +480,15 @@ def main():
                 "docs": result["retrieved_docs"],
                 "time": elapsed,
             }
+
             st.session_state.history.append(entry)
             st.session_state.last_result = entry
 
-    # Show result
     if st.session_state.last_result:
-        r = st.session_state.last_result
-        render_answer(r["question"], r["answer"], r["time"])
-        render_sources(r["docs"])
+        result = st.session_state.last_result
+        render_answer(result["question"], result["answer"], result["time"])
+        render_sources(result["docs"])
 
-    # History
     if st.session_state.history:
         render_history(st.session_state.history)
 
