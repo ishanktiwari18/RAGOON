@@ -1,4 +1,6 @@
 """Streamlit UI for Agentic RAG System - Redesigned"""
+import os
+os.environ["USER_AGENT"] = "RAGOON/1.0"
 import uuid
 import builtins
 builtins.uuid = uuid
